@@ -34,7 +34,7 @@ RISK_PCT           = 1.5
 RR_RATIO           = 2.0
 SL_BUFFER_PCT      = 0.10
 MAX_STOP_PCT       = 2.5
-ALLOW_SHORTS       = True
+ALLOW_SHORTS       = False
 
 TIMEFRAME          = "30m"
 SCAN_INTERVAL_SEC  = 60
