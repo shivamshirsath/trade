@@ -5,7 +5,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 import requests
 import pandas as pd
 import numpy as np
-from datetime import datetime
+from datetime import datetime, timezone
 
 # ==========================================
 # 0. KEEP-ALIVE WEB SERVER (FOR RENDER)
@@ -196,6 +196,9 @@ def main():
     risk_inr  = CAPITAL_INR * (RISK_PCT / 100.0)
     risk_usdt = risk_inr / USDT_INR_RATE
 
+    HEARTBEAT_INTERVAL_SEC = 3600  # 1 hour
+    last_heartbeat = time.time()
+
     start_msg = (
         f"🚀 <b>GTF Sniper Scanner Started (24/7 Cloud)</b>\n"
         f"Coins: {len(COINS)} | Timeframe: <b>{TIMEFRAME}</b>\n"
@@ -205,8 +208,13 @@ def main():
     send_telegram(start_msg)
 
     while True:
-        now_str = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+        now_str = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
         print(f"[{now_str} UTC] Scanning {len(COINS)} coins...", flush=True)
+
+        # Send "I am live" heartbeat every 1 hour
+        if time.time() - last_heartbeat >= HEARTBEAT_INTERVAL_SEC:
+            send_telegram(f"✅ <b>I am live!</b>\nActively scanning {len(COINS)} coins on {TIMEFRAME}.")
+            last_heartbeat = time.time()
 
         for sym in COINS:
             try:
